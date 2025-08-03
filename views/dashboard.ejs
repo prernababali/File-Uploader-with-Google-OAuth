@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1>Welcome <%= user.name %></h1>
+  <p>Email: <%= user.email %></p>
+
+  <form action="/upload" method="POST" enctype="multipart/form-data">
+    <label>Select a file to upload:</label>
+    <input type="file" name="file" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <h2>Your Files:</h2>
+  <ul>
+    <% if (files.length === 0) { %>
+      <li>No files uploaded yet.</li>
+    <% } else { %>
+      <% files.forEach(file => { %>
+        <li>
+          <strong><%= file.filename %></strong>
+          (<%= file.mimetype %>, <%= file.size %> bytes)
+          —
+          <a href="/uploads/<%= file.filename %>" target="_blank">View/Download</a>
+        </li>
+      <% }) %>
+
+    <% } %>
+  </ul>
+
+  <form action="/auth/logout" method="POST">
+    <button type="submit">Logout</button>
+  </form>
+</body>
+</html>
