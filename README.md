@@ -2,7 +2,7 @@
 
 A secure and modern file uploader web application that allows users to log in using their Google account and upload files to the server. Built using Node.js, Express, Multer, Passport (Google OAuth), Prisma ORM, and EJS templating.
 
----
+
 
 ## 🚀 Features
 
@@ -14,7 +14,7 @@ A secure and modern file uploader web application that allows users to log in us
 - ✅ Clean, server-side rendered views using EJS
 - ✅ Environment variables for secure configuration
 
----
+
 
 ## 💻 Tech Stack
 
@@ -28,26 +28,29 @@ A secure and modern file uploader web application that allows users to log in us
 | Session Handling | express-session                     |
 | Env Management   | dotenv                              |
 
----
+
 
 ## 📂 Project Structure
 
 odin-file-uploader/
 │
 ├── index.js # Main server logic
+
 ├── .env # Environment config
+
 ├── /views # EJS templates
+
 ├── /public/uploads # Uploaded files (static)
+
 ├── /prisma # Prisma schema and migrations
+
 ├── /middleware # Authentication middleware
+
 ├── package.json # Project metadata and dependencies
+
 └── .gitignore, .replit # Dev environment setup
 
-yaml
-Copy
-Edit
 
----
 
 ## 🔐 Authentication Flow
 
@@ -56,7 +59,7 @@ Edit
 3. Upon success, user is redirected to the **dashboard**.
 4. Session is created using `express-session`.
 
----
+
 
 ## 📁 File Upload Flow
 
@@ -65,7 +68,7 @@ Edit
 3. Prisma ORM stores the file name and user's email in the database.
 4. Uploaded files are listed on the dashboard with public access links.
 
----
+
 
 ## 🧠 Prisma Schema (Example)
 
@@ -76,73 +79,28 @@ model File {
   userEmail String
   uploaded  DateTime @default(now())
 }
-⚙️ Setup Instructions
-Clone the repo
-
-bash
-Copy
-Edit
-git clone https://github.com/your-username/odin-file-uploader.git
-cd odin-file-uploader
-Install dependencies
-
-bash
-Copy
-Edit
-npm install
-Create .env file
-
-ini
-Copy
-Edit
-PORT=3000
-GOOGLE_CLIENT_ID=your_client_id
-GOOGLE_CLIENT_SECRET=your_secret
-SESSION_SECRET=your_session_secret
-DATABASE_URL="file:./dev.db"  # Or PostgreSQL/MySQL URI
-Prisma setup
-
-bash
-Copy
-Edit
-npx prisma generate
-npx prisma migrate dev --name init
-Run the app
-
-bash
-Copy
-Edit
-node index.js
-📸 Screenshots
-Include images of:
-
-Login screen
-
-Dashboard after login
-
-File upload form
-
-Uploaded file list with links
 
 🛡️ Security Considerations
-Sessions protect access to file uploads and dashboard.
 
-File names are uniquely stored to avoid conflicts.
+--> Sessions protect access to file uploads and dashboard.
 
-.env file hides all sensitive credentials.
+--> File names are uniquely stored to avoid conflicts.
 
-Only authenticated users can access upload routes.
+--> .env file hides all sensitive credentials.
+
+--> Only authenticated users can access upload routes.
 
 📌 Future Improvements
-File deletion capability
 
-User model and detailed tracking
+--> File deletion capability
 
-Pagination for uploaded files
+--> User model and detailed tracking
 
-File size/type restrictions
+--> Pagination for uploaded files
 
-UI improvements with Tailwind or Bootstrap
+--> File size/type restrictions
+
+--> UI improvements with Tailwind or Bootstrap
 
 👤 Author
 Prerana Bubbly
