@@ -104,6 +104,4 @@ model File {
 
 👤 Author
 Prerana Bubbly
-Full Stack Developer | Node.js | Java | Spring Boot
-LinkedIn | GitHub
 
