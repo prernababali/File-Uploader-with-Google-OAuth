@@ -12,7 +12,7 @@ A secure and modern file uploader web application that allows users to log in us
 - ✅ Files saved in public/uploads and viewable via URL
 - ✅ File metadata stored in a database via Prisma
 - ✅ Clean, server-side rendered views using EJS
-- ✅ Environment variables for secure configuration
+- ✅ Environment variables for secure configurations
 
 
 
