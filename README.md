@@ -1,23 +1,20 @@
-# 🔐 Odin File Uploader
-
+# Odin File Uploader
 A secure and modern file uploader web application that allows users to log in using their Google account and upload files to the server. Built using Node.js, Express, Multer, Passport (Google OAuth), Prisma ORM, and EJS templating.
 
 
 
-## 🚀 Features
-
-- ✅ Google OAuth 2.0 login via Passport.js
-- ✅ Authenticated routes with session support
-- ✅ File upload functionality using Multer
-- ✅ Files saved in public/uploads and viewable via URL
-- ✅ File metadata stored in a database via Prisma
-- ✅ Clean, server-side rendered views using EJS
-- ✅ Environment variables for secure configurations
-
+## Features
+-  Google OAuth 2.0 login via Passport.js
+-  Authenticated routes with session support
+-  File upload functionality using Multer
+-  Files saved in public/uploads and viewable via URL
+-  File metadata stored in a database via Prisma
+-  Clean, server-side rendered views using EJS
+-  Environment variables for secure configurations
 
 
-## 💻 Tech Stack
 
+## Tech Stack
 | Layer            | Technology Used                     |
 |------------------|-------------------------------------|
 | Backend          | Node.js, Express.js                 |
@@ -30,8 +27,7 @@ A secure and modern file uploader web application that allows users to log in us
 
 
 
-## 📂 Project Structure
-
+## Project Structure
 odin-file-uploader/
 │
 ├── index.js # Main server logic
@@ -52,8 +48,7 @@ odin-file-uploader/
 
 
 
-## 🔐 Authentication Flow
-
+## Authentication Flow
 1. User visits homepage and clicks **Login with Google**.
 2. Passport.js handles the OAuth flow.
 3. Upon success, user is redirected to the **dashboard**.
@@ -61,8 +56,7 @@ odin-file-uploader/
 
 
 
-## 📁 File Upload Flow
-
+## File Upload Flow
 1. User uploads a file via the dashboard form.
 2. Multer saves the file to `public/uploads/`.
 3. Prisma ORM stores the file name and user's email in the database.
@@ -70,9 +64,8 @@ odin-file-uploader/
 
 
 
-## 🧠 Prisma Schema (Example)
-
-```prisma
+## Prisma Schema (Example)
+prisma
 model File {
   id        Int      @id @default(autoincrement())
   filename  String
@@ -80,7 +73,7 @@ model File {
   uploaded  DateTime @default(now())
 }
 
-🛡️ Security Considerations
+# Security Considerations
 
 --> Sessions protect access to file uploads and dashboard.
 
@@ -90,7 +83,8 @@ model File {
 
 --> Only authenticated users can access upload routes.
 
-📌 Future Improvements
+
+# Future Improvements
 
 --> File deletion capability
 
@@ -104,4 +98,3 @@ model File {
 
 👤 Author
 Prerana Bubbly
-
