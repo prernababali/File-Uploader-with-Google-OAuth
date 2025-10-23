@@ -10,7 +10,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      //callbackURL: "/auth/google/callback",
+         callbackURL: process.env.GOOGLE_CALLBACK_URL, // ✅ use full URL
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -32,22 +33,23 @@ passport.use(
         done(null, user); // ✅ send the DB user
       } catch (err) {
         done(err, null);
-      }
-    }
-  )
+      }
+    }
+  )
 );
 
 
+
+
 passport.serializeUser((user, done) => {
-  done(null, user.id); // only store DB user id
+  done(null, user.id); // ✅ only save the user ID
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await prisma.user.findUnique({ where: { id } });
-    done(null, user);
+    done(null, user); // ✅ retrieve full user from DB
   } catch (err) {
     done(err, null);
   }
 });
-

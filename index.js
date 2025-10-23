@@ -9,6 +9,9 @@ const ensureAuth = require('./middleware/ensureAuth');
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+// ✅ Add this near the top of app.js
+const fileRoutes = require('./routes/fileRoutes');
+
 const app = express();
 app.use("/uploads", express.static("public/uploads"));
 
@@ -129,6 +132,9 @@ app.get("/logout", (req, res, next) => {
     res.redirect("/"); // go back to home or login
   });
 });
+
+
+app.use('/', fileRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`); // ✅ fixed: backticks used

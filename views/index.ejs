@@ -1,44 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-</head>
-<body>
-  
-<h1>Welcome <%= user?.displayName || user?.name || 'Guest' %></h1>
-<p>Email: <%= user?.emails ? user.emails[0].value : 'Not logged in' %></p>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-<% if (!user) { %>
-  <a href="/auth/google">Login with Google</a>
-<% } else { %>
-  <a href="/logout">Logout</a>
-<% } %>   
+    <!-- Bootstrap CSS & Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
 
-  <form action="/upload" method="POST" enctype="multipart/form-data">
-    <label>Select a file to upload:</label>
-    <input type="file" name="file" required />
-    <button type="submit">Upload</button>
-  </form>
+    <style>
+      body {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        font-family: "Poppins", sans-serif;
+        color: #333;
+        min-height: 100vh;
+        transition: background 0.5s ease;
+      }
 
-  <h2>Your Files:</h2>
-  <ul>
-    <% if (files.length === 0) { %>
-      <li>No files uploaded yet.</li>
-    <% } else { %>
-      <% files.forEach(file => { %>
-        <li>
-          <strong><%= file.filename %></strong>
-          (<%= file.mimetype %>, <%= file.size %> bytes)
-        </li>
-      <% }) %>
-    <% } %>
-  </ul>
+      body.dark-mode {
+        background: linear-gradient(135deg, #212121, #424242);
+        color: #eee;
+      }
 
-  <form action="/auth/logout" method="GET">
-  <button type="submit">Logout</button>
-</form>
+      .card {
+        border: none;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        transition: 0.3s;
+      }
 
-</body>
+      body.dark-mode .card {
+        background: rgba(40, 40, 40, 0.8);
+      }
+
+      h1 {
+        font-weight: 700;
+        color: #1565c0;
+      }
+
+      body.dark-mode h1 {
+        color: #90caf9;
+      }
+
+      .upload-section {
+        border: 2px dashed #90caf9;
+        border-radius: 15px;
+        padding: 25px;
+        background: #f8fbff;
+        transition: 0.3s;
+        position: relative;
+        backdrop-filter: blur(8px);
+      }
+
+      body.dark-mode .upload-section {
+        background: rgba(80, 80, 80, 0.4);
+        border-color: #64b5f6;
+      }
+
+      .upload-section.dragover {
+        background: #e3f2fd;
+        border-color: #1976d2;
+      }
+
+      .file-item {
+        background: #f5f5f5;
+        border-radius: 12px;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.3s;
+      }
+
+      body.dark-mode .file-item {
+        background: #616161;
+      }
+
+      .file-item:hover {
+        background: #e3f2fd;
+        transform: translateY(-3px);
+      }
+
+      body.dark-mode .file-item:hover {
+        background: #757575;
+      }
+
+      .file-name {
+        font-weight: 600;
+        color: #1565c0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 250px;
+      }
+
+      body.dark-mode .file-name {
+        color: #bbdefb;
+      }
+
+      .file-meta {
+        margin-top: 4px;
+      }
+
+      .file-meta .badge {
+        font-weight: 500;
+        font-size: 0.8rem;
+        margin-right: 5px;
+        opacity: 0.8;
+      }
+
+      .btn {
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: scale(1.1);
+      }
+
+      .stats-card {
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        background: linear-gradient(135deg, #bbdefb, #90caf9);
+        color: #fff;
+        transition: 0.3s;
+      }
+
+      body.dark-mode .stats-card {
+        background: linear-gradient(135deg, #1565c0, #1e88e5);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #666;
+      }
+
+      body.dark-mode footer {
+        color: #bbb;
+      }
+
+      .dark-toggle {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #1565c0;
+        transition: color 0.3s ease;
+      }
+
+      body.dark-mode .dark-toggle {
+        color: #bbdefb;
+      }
+
+      @media (max-width: 576px) {
+        .file-name {
+          max-width: 150px;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container py-5">
+      <div class="card mx-auto position-relative" style="max-width: 900px;">
+        <i class="bi bi-moon-stars-fill dark-toggle" id="darkToggle" aria-label="Toggle dark mode" role="button" tabindex="0"></i>
+
+        <div class="text-center mb-4">
+          <h1>Welcome <%= user?.displayName || user?.name || "Guest" %> 👋</h1>
+          <p class="text-muted">
+            Email: <%= user?.emails ? user.emails[0].value : "Not logged in" %>
+          </p>
+        </div>
+
+        <!-- Auth Buttons -->
+        <div class="text-center mb-4">
+          <% if (!user) { %>
+          <a href="/auth/google" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Login with Google">
+            <i class="bi bi-google"></i> Login with Google
+          </a>
+          <% } else { %>
+          <form action="/auth/logout" method="GET" class="d-inline">
+            <button
+              type="submit"
+              class="btn btn-secondary text-white"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Logout"
+            >
+              <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+          </form>
+          <% } %>
+        </div>
+
+        <% if (user) { %>
+        <!-- Stats -->
+        <div class="row text-center mb-4">
+          <div class="col-md-4 mb-3 mb-md-0">
+            <div class="stats-card">
+              <h4><i class="bi bi-file-earmark"></i></h4>
+              <p class="mb-0 fw-bold"><%= files.length %></p>
+              <small>Total Files</small>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3 mb-md-0">
+            <div class="stats-card">
+              <h4><i class="bi bi-hdd"></i></h4>
+              <p class="mb-0 fw-bold">
+                <%= (files.reduce((acc, f) => acc + f.size, 0) / 1024 / 1024).toFixed(2) %> MB
+              </p>
+              <small>Used Storage</small>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stats-card">
+              <h4><i class="bi bi-cloud"></i></h4>
+              <p class="mb-0 fw-bold">100 MB</p>
+              <small>Total Storage</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section text-center mb-4" id="dropZone">
+          <form
+            action="/upload"
+            method="POST"
+            enctype="multipart/form-data"
+            id="uploadForm"
+            class="d-flex flex-column align-items-center gap-3"
+          >
+            <label class="form-label mb-2 fw-semibold">Drag or select a file to upload</label>
+            <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap w-100">
+              <input type="file" name="file" class="form-control w-50" required />
+              <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+            <div class="progress mt-3" style="display: none; width: 50%;">
+              <div
+                class="progress-bar progress-bar-striped progress-bar-animated"
+                role="progressbar"
+                style="width: 0%"
+              ></div>
+            </div>
+          </form>
+        </div>
+
+        <!-- File List -->
+        <h4 class="mb-3"><i class="bi bi-folder2-open"></i> Your Files:</h4>
+        <% if (files.length === 0) { %>
+        <p class="text-muted">No files uploaded yet.</p>
+        <% } else { %>
+        <div class="file-list">
+          <% files.forEach((file) => { %>
+          <div class="file-item">
+            <div>
+              <div class="file-name" title="<%= file.filename %>">
+                <i class="bi bi-file-earmark-text"></i> <%= file.filename %>
+              </div>
+              <div class="file-meta">
+                <span class="badge bg-primary"><%= file.mimetype %></span>
+                <span class="badge bg-secondary"><%= (file.size / 1024 / 1024).toFixed(2) %> MB</span>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <a
+                href="/uploads/<%= file.filename %>"
+                class="btn btn-sm btn-outline-success"
+                download
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Download file"
+                aria-label="Download <%= file.filename %>"
+              >
+                <i class="bi bi-download"></i>
+              </a>
+              <form
+                class="delete-form"
+                data-filename="<%= file.filename %>"
+                method="POST"
+                action="/delete/<%= file.filename %>"
+              >
+                <button
+                  type="submit"
+                  class="btn btn-sm btn-outline-danger"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Delete file"
+                  aria-label="Delete <%= file.filename %>"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+        <% } %>
+        <% } %>
+      </div>
+
+      <footer class="mt-5">© 2025 File Uploader | Designed with ❤️</footer>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Dark Mode Toggle
+      const toggle = document.getElementById("darkToggle");
+      toggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        toggle.classList.toggle("bi-brightness-high-fill");
+      });
+
+      // Drag-and-drop support
+      const dropZone = document.getElementById("dropZone");
+      const uploadForm = document.getElementById("uploadForm");
+      const progressBar = document.querySelector(".progress");
+      const progress = progressBar.querySelector(".progress-bar");
+
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+      dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        uploadForm.file.files = e.dataTransfer.files;
+      });
+
+      // Upload Progress
+      uploadForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = new FormData(uploadForm);
+        progressBar.style.display = "block";
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/upload");
+        xhr.upload.addEventListener("progress", (e) => {
+          if (e.lengthComputable) {
+            const percent = (e.loaded / e.total) * 100;
+            progress.style.width = percent + "%";
+          }
+        });
+        xhr.onload = () => location.reload();
+        xhr.send(formData);
+      });
+
+      // Enable Bootstrap tooltips everywhere
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+
+      // Delete file without page reload
+      document.querySelectorAll(".delete-form").forEach((form) => {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault(); // prevent form reload
+
+          const filename = form.dataset.filename;
+
+          try {
+            const res = await fetch(`/delete/${encodeURIComponent(filename)}`, {
+              method: "POST",
+            });
+
+            if (res.ok) {
+              form.closest(".file-item").remove(); // remove file from list
+            } else {
+              alert("Failed to delete file.");
+            }
+          } catch (err) {
+            alert("Failed to delete file.");
+          }
+        });
+      });
+    </script>
+  </body>
 </html>

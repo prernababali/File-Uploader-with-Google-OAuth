@@ -20,5 +20,9 @@ const upload = multer({ storage: storage });
 // Routes
 router.post('/upload', upload.single('file'), filesController.uploadFile);
 router.get('/myfiles', filesController.getFiles);
+// Delete file route
+// To this:
+router.post('/delete/:filename', filesController.deleteFile);
+
 
 module.exports = router;

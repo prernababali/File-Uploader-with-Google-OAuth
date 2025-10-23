@@ -1,36 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-</head>
-<body>
-  <h1>Welcome <%= user.name %></h1>
-  <p>Email: <%= user.email %></p>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- ✅ Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <form action="/upload" method="POST" enctype="multipart/form-data">
-    <label>Select a file to upload:</label>
-    <input type="file" name="file" required />
-    <button type="submit">Upload</button>
-  </form>
+    <style>
+      body {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        font-family: "Poppins", sans-serif;
+        color: #333;
+        min-height: 100vh;
+      }
 
-  <h2>Your Files:</h2>
-  <ul>
-    <% if (files.length === 0) { %>
-      <li>No files uploaded yet.</li>
-    <% } else { %>
-      <% files.forEach(file => { %>
-        <li>
-          <strong><%= file.filename %></strong>
-          (<%= file.mimetype %>, <%= file.size %> bytes)
-          —
-          <a href="/uploads/<%= file.filename %>" target="_blank">View/Download</a>
-        </li>
-      <% }) %>
+      .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+        padding: 30px;
+        background: #fff;
+      }
 
-    <% } %>
-  </ul>
+      h1 {
+        font-weight: 700;
+        color: #1565c0;
+      }
 
+      .upload-section {
+        border: 2px dashed #90caf9;
+        border-radius: 10px;
+        padding: 25px;
+        background: #f8fbff;
+        transition: 0.3s;
+      }
 
-</body>
+      .upload-section:hover {
+        background: #e3f2fd;
+      }
+
+      .file-list {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 5px;
+      }
+
+      .file-item {
+        background: #f5f5f5;
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.2s;
+      }
+
+      .file-item:hover {
+        background: #e3f2fd;
+        transform: translateY(-2px);
+      }
+
+      .file-name {
+        font-weight: 600;
+        color: #1565c0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 250px;
+        display: inline-block;
+      }
+
+      .file-meta {
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #555;
+        font-size: 0.9rem;
+      }
+
+      .btn-logout {
+        background: #9e9e9e;
+        border: none;
+      }
+
+      .btn-logout:hover {
+        background: #757575;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container py-5">
+      <div class="card mx-auto" style="max-width: 800px;">
+        <div class="text-center mb-4">
+          <h1>Welcome <%= user.name %></h1>
+          <p class="text-muted mb-3">Email: <%= user.email %></p>
+        </div>
+
+        <!-- ✅ Upload Alerts -->
+        <% if (typeof success !== 'undefined') { %>
+          <div class="alert alert-success text-center"><%= success %></div>
+        <% } else if (typeof error !== 'undefined') { %>
+          <div class="alert alert-danger text-center"><%= error %></div>
+        <% } %>
+
+        <!-- ✅ Upload Section -->
+        <div class="upload-section text-center mb-4">
+          <form action="/upload" method="POST" enctype="multipart/form-data">
+            <label class="form-label mb-2 fw-semibold">Select a file to upload:</label>
+            <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+              <input type="file" name="file" class="form-control w-50" required />
+              <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ✅ Files List -->
+        <h4 class="mb-3">Your Files:</h4>
+        <% if (files.length === 0) { %>
+          <p class="text-muted">No files uploaded yet.</p>
+        <% } else { %>
+          <div class="file-list">
+            <% files.forEach(file => { %>
+              <div class="file-item">
+                <div>
+                  <div class="file-name"><%= file.filename %></div>
+                  <div class="file-meta">
+                    <%= file.mimetype %> • 
+                    <%= (file.size / 1024 / 1024).toFixed(2) %> MB
+                  </div>
+                </div>
+                <a href="/uploads/<%= file.filename %>" target="_blank" class="btn btn-sm btn-outline-primary">
+                  View / Download
+                </a>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <div class="text-center mt-4">
+          <a href="/logout" class="btn btn-logout text-white">Logout</a>
+        </div>
+      </div>
+
+      <footer class="mt-5">© 2025 File Uploader | Designed with ❤️</footer>
+    </div>
+  </body>
 </html>
